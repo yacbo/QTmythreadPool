@@ -1,0 +1,179 @@
+
+% stDisNetCalMembers : 包含字段：
+{'g_stPara',
+'g_stState',
+'g_stDgNodeArr',
+'g_stUploadBusCommu',
+'g_stDwloadBusCommu',
+'iterator_count',
+'b_is_first_handle_frequency'}；
+  g_stPara：结构体，包含字段：{'B','L','D','Capacity','P_Demand','P_Realtime',
+                                                       'time','t_hold','step','beta','kappa','Freq','Kg'}；
+  g_stState：结构体，包含字段：{'miu_pin','miu_trans_step','miu_hold_step','miu_previous_step','flag_converge','flag_miu', 'miu_this_time','miu_previous_time'}；
+  g_stDgNodeArr：结构体数组，个数5，每个结构体均包含字段：{'DG_NO','generation_value','simtime'}；    
+  g_stUploadBusCommu：结构体，包含字段：{'PowerSimTime','PowerFrequency','BusNo','Startnode_ID','Destnode_ID','ErrorType','TimeDelay'}
+  g_stDwloadBusCommu:结构体，包含字段和g_stUploadBusCommu相同。
+  iterator_count：迭代次数，首次调用该函数时，此数值初始化为 0 
+  b_is_first_handle_frequency：是否首次执行频率信息相关操作，初始化为 true
+
+
+
+type struct _stDisNetCalMembers
+{
+	Para g_stPara;
+	State g_stState;
+	DG_Node[5] g_stDgNodeArr;
+	Bus_Info_Commu g_stUploadBusCommu;
+	Bus_Info_Commu g_stDwloadBusCommu;
+	int iterator_count;
+	bool b_is_first_handle_frequency;
+}stDisNetCalMembers
+
+
+
+
+/*****************Para g_stPara****************/
+
+typedef struct _para{
+    int B[NODE_NUM][NODE_NUM];       //连接矩阵
+    int L[NODE_NUM][NODE_NUM];
+    int D[NODE_NUM];
+    ActivePower Capacity[NODE_NUM];  //可调节能力
+    ActivePower P_Demand;            //缺额功率
+    ActivePower P_Realtime;          //迭代状态量
+    double time;
+    double t_hold;
+    double step;                     //步长
+    double beta;
+    double kappa;
+    double Freq;                     //电网频率
+    double Kg;                       //调节系数
+}Para;
+
+public:
+    bool set_mat(const char *VarName, const Para& para);
+    const Para& get_mat(const char* VarName);
+private:
+    mxArray *mat_Para_B;
+    mxArray *mat_Para_L;
+    mxArray *mat_Para_D;
+    mxArray *mat_Para_Capacity;
+    mxArray *mat_Para_P_Demand;
+	mxArray *mat_Para_P_Realtime;
+    mxArray *mat_Para_time;
+    mxArray *mat_Para_t_hold;
+    mxArray *mat_Para_step;
+    mxArray *mat_Para_beta;
+	mxArray *mat_Para_kappa;
+    mxArray *mat_Para_Freq;
+	mxArray *mat_Para_Kg;
+	
+    mat_Para_B = mxCreateDoubleMatrix(5, 5, mxREAL);
+    mat_Para_L = mxCreateDoubleMatrix(5, 5, mxREAL);
+    mat_Para_D = mxCreateDoubleMatrix(1, 5, mxREAL);
+    mat_Para_Capacity = mxCreateDoubleMatrix(1, 5, mxREAL);
+    mat_Para_P_Demand  = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_Para_P_Realtime = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_Para_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_Para_t_hold = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_Para_step = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_Para_beta = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_Para_kappa = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_Para_Freq = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_Para_Kg = mxCreateDoubleMatrix(1, 1, mxREAL);
+
+
+/**********************State g_stState*************************/
+typedef struct _state{
+    MIU miu_pin;
+    MIU miu_trans_step[NODE_NUM];
+    MIU miu_hold_step[NODE_NUM];
+    MIU miu_previous_step[NODE_NUM];
+    bool flag_converge;
+    bool flag_miu;
+    MIU miu_this_time[NODE_NUM];
+    MIU miu_previous_time[NODE_NUM];
+}State;
+
+public:
+    bool set_mat(const char *VarName, const State& state);
+    const State& get_mat(const char* VarName);
+private:
+    mxArray *mat_miu_pin;
+    mxArray *mat_miu_trans_step;
+    mxArray *mat_miu_hold_step;
+    mxArray *mat_miu_previous_step;
+    mxArray *mat_flag_converge;
+	mxArray *mat_flag_miu;
+    mxArray *mat_miu_this_time;
+	mxArray *mat_miu_previous_time;
+	
+	mat_miu_pin = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_trans_step = mxCreateDoubleMatrix(1, 5, mxREAL);
+    mat_miu_hold_step = mxCreateDoubleMatrix(1, 5, mxREAL);
+    mat_miu_previous_step = mxCreateDoubleMatrix(1, 5, mxREAL);
+    mat_flag_converge = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_flag_miu = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_this_time = mxCreateDoubleMatrix(1, 5, mxREAL);
+	mat_miu_previous_time = mxCreateDoubleMatrix(1, 5, mxREAL);
+
+
+/***************************DG_Node**********************************/
+//电力软件上传至电力控制算法结构体
+typedef struct DG_exchangedata{
+    double DG_NO;
+    double generation_value;
+    double simtime;
+}DG_Node;
+
+public:
+    bool set_mat(const char *VarName, const DGNodeVec& vec);
+    const DGNodeVec& get_mat(const char* VarName);
+private:
+    mxArray *mat_DG_NO;
+    mxArray *mat_generation_value;
+    mxArray *mat_simtime;	
+	
+	mat_DG_NO = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_generation_value = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_simtime = mxCreateDoubleMatrix(1, 1, mxREAL);
+
+/*********************Bus_Info_Commu g_stUploadBusCommu/g_stDownloadBusCommu*********************************/
+typedef struct _Bus_Info_Commu{
+    double PowerSimTime;         //仿真时刻
+    double PowerFrequency;       //电网频率
+    int BusNo;                   //母线节点编号
+    int Startnode_ID;            //通信起点编号
+    int Destnode_ID;             //通信终点编号
+    int ErrorType;               //故障类型
+    double TimeDelay;            //通信时延
+}Bus_Info_Commu;
+
+public:
+    bool set_mat(const char *VarName, const Bus_Info_Commu& busInfoCommu);
+    const Bus_Info_Commu& get_mat(const char* VarName);
+
+private:
+    mxArray *mat_miu_pin;
+    mxArray *mat_miu_trans_step;
+    mxArray *mat_miu_hold_step;
+    mxArray *mat_miu_previous_step;
+    mxArray *mat_flag_converge;
+	mxArray *mat_flag_miu;
+    mxArray *mat_miu_this_time;
+	mxArray *mat_miu_previous_time;
+	
+	mat_miu_pin = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_trans_step = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_hold_step = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_previous_step = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_flag_converge = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_flag_miu = mxCreateDoubleMatrix(1, 1, mxREAL);
+    mat_miu_this_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mat_miu_previous_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+
+
+
+
+
+

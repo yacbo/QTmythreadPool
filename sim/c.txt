@@ -1,0 +1,82 @@
+2. stInSuUnionSimData： 
+   { 
+      'realtime', 
+      'sim_time',
+      
+	  'src_id',
+      'dst_id', 
+      'err_type',
+      'trans_delay',
+      
+	  'bus_id',
+      'power_sim_time',
+      'data_length',
+      'power_data_type',
+      'freq',
+       
+	   'data'  
+   }
+   (1){ 'realtime', 'sim_time'}字段对应于C++结构体 UnionSimData 的相应成员变量；
+   (2){ 'src_id','dst_id', 'err_type','trans_delay'} 字段对应于C++结构体CommSimData中成员变量；
+   (3)如果传入的上行数据个数为 1时，则
+   上面结构体中的字段{ 'bus_id','power_sim_time','data_length','power_data_type','freq' } 对应于C++中的 PowerFreqInforData 结构体中的成员变量数值，其余情况所有该字段可初始化为0；
+   (4)当上行数据stInSuUnionSimData 个数大于1时，上面字段中的'data'值对应于Commu_Ctrl结构体中的data[0]，其余情况'data'字段的数值可初始化为0。
+ 
+const char* fieldnames[] = {"realtime","sim_time","src_id","dst_id","err_type","trans_delay","bus_id","power_sim_time","data_length","power_data_type","freq","data"};
+
+simDataParams = mxCreateStructMatrix(1, 1, 12, fieldnames);  //创建二维架构mxArray, m为结构体对象个数，n为每个成员变量的数组数，nfields为成员变量的个数，fieldnames为成员变量名   
+   
+   
+   bool set_mat(const char *VarName, const stDisNetCalMembers& members)
+{
+      //realtime
+	  mat_realtime = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_realtime), &(members.realtime), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "realtime", mat_realtime);
+	  //sim_time
+	  mat_sim_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_sim_time), &(members.sim_time), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "sim_time", mat_sim_time);
+	  
+	  //src_id
+	  mat_src_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_src_id), &(members.src_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "src_id", mat_src_id);
+      //dst_id
+	  mat_dst_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_dst_id), &(members.dst_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "dst_id", mat_dst_id);
+      //err_type
+	  mat_err_type = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_err_type), &(members.err_type), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "err_type", mat_err_type);
+      //trans_delay
+	  mat_trans_delay = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_trans_delay), &(members.trans_delay), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "trans_delay", mat_trans_delay);
+ 
+	  //bus_id
+	  mat_bus_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_bus_id), &(members.bus_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "bus_id", mat_bus_id);
+      //power_sim_time
+	  mat_power_sim_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_power_sim_time), &(members.power_sim_time), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "power_sim_time", mat_power_sim_time);
+      //data_length
+	  mat_power_sim_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_power_sim_time), &(members.power_sim_time), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "power_sim_time", mat_power_sim_time);
+      //power_data_type
+	  mat_power_sim_time = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_power_sim_time), &(members.power_sim_time), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "power_sim_time", mat_power_sim_time);
+      //freq
+	  mat_freq = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_freq), &(members.freq), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "freq", mat_freq);
+	  //data
+	  mat_data = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_data), &(members.data), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "data", mat_data);
+}

@@ -1,0 +1,32 @@
+3. dw_node_map: ----取值对应C++中的 cfg_data_def.h中的 PowerConfInfo结构体中的成员_dw_node_map 中的信息
+   {   
+       uint32_t DG_node_ID,   -----对应于 map容器的key值  
+       uint32_t power_bus_id,
+       uint32_t comm_src_id,                  
+       uint32_t comm_dst_id
+   }
+   
+const char* fieldnames[] = {"DG_node_ID","power_bus_id","comm_src_id","comm_dst_id"};
+
+simDataParams = mxCreateStructMatrix(1, 1, 4, fieldnames);  //创建二维架构mxArray, m为结构体对象个数，n为每个成员变量的数组数，nfields为成员变量的个数，fieldnames为成员变量名   
+   
+   
+bool set_mat(const char *VarName, const stDisNetCalMembers& members)
+{
+	  //DG_node_ID,   -----对应于 map容器的key值 
+	  mat_DG_node_ID = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_DG_node_ID), &(members.DG_node_ID), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "DG_node_ID", mat_DG_node_ID);	  
+      //power_bus_id,
+	  mat_power_bus_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_power_bus_id), &(members.power_bus_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "power_bus_id", mat_power_bus_id);
+      //comm_src_id,       
+	  mat_comm_src_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_comm_src_id), &(members.comm_src_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "comm_src_id", mat_comm_src_id);	  
+      //comm_dst_id
+	  mat_comm_dst_id = mxCreateDoubleMatrix(1, 1, mxREAL);
+	  memcpy(mxGetPr(mat_comm_dst_id), &(members.comm_dst_id), 1 * 1 * sizeof(double));
+      mxSetField(simDataParams, 0, "comm_dst_id", mat_comm_dst_id);
+}

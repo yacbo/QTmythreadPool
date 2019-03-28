@@ -1,0 +1,85 @@
+function [executeFlag, stOutSdUnionSimData] = distri_network_strategy(stDisNetCalMembers, stInSuUnionSimData, dw_node_map )
+
+入参：
+1. stDisNetCalMembers:
+   {
+       'B','L','D','Capacity','P_Demand','P_Realtime','time','t_hold','step','beta','kappa','Freq','Kg',
+   	   'miu_pin','miu_trans_step','miu_hold_step','miu_previous_step','flag_converge','flag_miu','miu_this_time','miu_previous_time',
+   	   
+   	   'DG_NO','generation_value','simtime',
+   	   
+   	   'upPowerSimTime','upPowerFrequency','upBusNo','upStartnode_ID','upDestnode_ID','upErrorType','upTimeDelay',
+   	   'dwPowerSimTime','dwPowerFrequency','dwBusNo','dwStartnode_ID','dwDestnode_ID','dwErrorType','dwTimeDelay',
+   	   
+   	   'iterator_count','b_is_first_handle_frequency'
+   }
+   
+   结构体中的字段和C++版中的结构体的对应关系如下：
+   (1)上面字段中：{'B','L','D','Capacity','P_Demand','P_Realtime','time','t_hold','step','beta','kappa','Freq','Kg'}---对应于C++ 头文件distri_network_data.h中的 Para 结构体中的成员变量；
+   (2)上面字段中：{'miu_pin','miu_trans_step','miu_hold_step','miu_previous_step','flag_converge','flag_miu','miu_this_time','miu_previous_time'} 对应于 头文件distri_network_data.h中的 State 结构体中的成员变量；
+   (3){'DG_NO','generation_value','simtime'}   对应于 头文件distri_network_data.h中的 DG_Node 结构体中的成员变量 ；    
+   (4)字段：{'upPowerSimTime','upPowerFrequency','upBusNo','upStartnode_ID','upDestnode_ID','upErrorType','upTimeDelay'} 对应于 头文件distri_network_data.h中的 Bus_Info_Commu 结构体中的成员变量;
+   (5){'dwPowerSimTime','dwPowerFrequency','dwBusNo','dwStartnode_ID','dwDestnode_ID','dwErrorType','dwTimeDelay'} 同样对应于 头文件distri_network_data.h中的 Bus_Info_Commu 结构体中的成员变量;
+   (6)'iterator_count'：此数值初始化为 0;
+   (7)'b_is_first_handle_frequency' : 初始化为 true
+
+2. stInSuUnionSimData： 
+   { 
+      'realtime', 
+      'sim_time',
+      
+	  'src_id',
+      'dst_id', 
+      'err_type',
+      'trans_delay',
+      
+	  'bus_id',
+      'power_sim_time',
+      'data_length',
+      'power_data_type',
+      'freq',
+       
+	   'data'  
+   }
+   (1){ 'realtime', 'sim_time'}字段对应于C++结构体 UnionSimData 的相应成员变量；
+   (2){ 'src_id','dst_id', 'err_type','trans_delay'} 字段对应于C++结构体CommSimData中成员变量；
+   (3)如果传入的上行数据个数为 1时，则
+   上面结构体中的字段{ 'bus_id','power_sim_time','data_length','power_data_type','freq' } 对应于C++中的 PowerFreqInforData 结构体中的成员变量数值，其余情况所有该字段可初始化为0；
+   (4)当上行数据stInSuUnionSimData 个数大于1时，上面字段中的'data'值对应于Commu_Ctrl结构体中的data[0]，其余情况'data'字段的数值可初始化为0。
+
+3. dw_node_map: ----取值对应C++中的 cfg_data_def.h中的 PowerConfInfo结构体中的成员_dw_node_map 中的信息
+   {   
+       uint32_t DG_node_ID,   -----对应于 map容器的key值  
+       uint32_t power_bus_id,
+       uint32_t comm_src_id,                  
+       uint32_t comm_dst_id
+   }
+
+
+返回值：
+1. stOutSdUnionSimData      联合仿真下行数据（出参）
+包含字段：
+ { 'realtime',  'sim_time',  
+   'src_id', 'dst_id', 'err_type','trans_delay', 
+   'bus_id', 'sim_time', 'data_length', 
+   'type', 'dp',
+   'freq',
+   'data',
+   'interact_type',
+   'sim_data_send_flag'
+ }
+ 
+ (1) {'src_id', 'dst_id', 'err_type','trans_delay',} 对应于字段对应于C++ 头文件 comm_data_def.h 中的结构体CommSimData中成员变量
+ (2) {'bus_id', 'sim_time', 'data_length'} 对应于 头文件 power_data_def.h中的 PowerDataBase 结构体中的成员变量;
+ (3) { 'type', 'dp' } 对应于C++中的 distri_network_data.h中的 PowerDpNodeData 结构体中的成员变量;
+ (4) {'freq'} 对应于C++中的 distri_network_data.h中的 PowerFreqInforData 结构体中的成员变量数值;
+ (5){'data' } 对应于C++中的 distri_network_data.h中的 Commu_Ctrl 结构体中data[0]的成员变量数值;
+ (6){'interact_type'} 如果interact_type 的类型是 
+         1）EInteractType.eInteract_ctrl_to_power： 则对应的C++ 下行数据中的 power_dat 传输数据是  PowerDpNodeData
+         2）EInteractType.eInteract_upload_bus：则对应的C++ 下行数据中的 power_dat 传输数据是 PowerFreqInforData
+         3）EInteractType.eIneract_ctrl_to_comm：则对应的C++ 下行数据中的 power_dat 传输数据是 data
+
+(7) {'sim_data_send_flag'} 其值表示 通信系统收到数据后是发往电力还是电力应用，即在C++中对应于下行数据 UnionSimDatVec 中的 power_dat[POWER_DATA_MAX_LEN - 1]，即将获取的该值直接赋值给power_dat[POWER_DATA_MAX_LEN - 1]
+
+2. executeFlag  ：             true：函数执行成功
+                             false：函数执行失败

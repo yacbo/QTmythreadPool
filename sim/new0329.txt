@@ -1,0 +1,104 @@
+#include "stdafx.h"
+#include <string>
+#include <cstring>
+#include "engine.h"
+#include <iostream>
+#include "matrix.h"
+#include <vector>
+using namespace std;
+
+//电力数据基类
+typedef struct PowerDataBase {
+	uint32_t bus_id;//母线编号.
+	double sim_time;//当前仿真时间
+	uint32_t data_length;//数据长度
+}PowerDataBase;
+//电力仿真上行数据
+typedef struct PowerSimUpStmData : public PowerDataBase {
+}PowerSimUpStmData;
+typedef struct PowerBusInforData : public PowerSimUpStmData {
+	double bus_volt;//母线电压.
+	double bus_angle;//母线幅角.
+}PowerDvgData;
+
+typedef struct Tool
+{
+	double count;
+	double sales;
+}Tool;
+
+typedef struct Student
+{
+	int age;
+	string name;
+	double score[4];
+	int vec[2][2];
+	bool flag;
+	Tool tool;
+}Student;
+
+
+
+
+int SetMat(char *VarName, void *mat, int M, Engine *engine)
+{
+	mxArray *matArray = mxCreateDoubleMatrix(M, M, mxREAL);  //分配M行M列数组空间
+	memcpy(mxGetPr(matArray), mat, M*M * sizeof(double));
+	int status = engPutVariable(engine, VarName, matArray);
+	mxDestroyArray(matArray);
+	return status;
+}
+
+void GetMat(char *VarName, void *mat, int M, Engine *engine)
+{
+	memcpy(mat, mxGetPr(engGetVariable(engine, VarName)), M*M * sizeof(double));
+}
+
+
+//结构体数据放入matlab工作空间
+int SetStuStruct(char *VarName, Student stu, Engine *engine)
+{
+	const char* fields[] = { "age", "name", "score","vec","flag","tool"};
+	mxArray *params = mxCreateStructMatrix(1, 1, 6, fields);  //m为结构体个数，n为每个成员变量的数组数，nfields为成员变量的个数，fieldnames为成员变量名
+	//age
+	mxArray *matAge = mxCreateDoubleMatrix(1, 1, mxREAL);  //分配1行1列的double空间
+	double tmp_age = stu.age;
+	memcpy(mxGetPr(matAge), &tmp_age, 1 * 1 * sizeof(double));
+	mxSetField(params, 0, "age", matAge);
+
+	mxSetField(params, 0, "name", mxCreateString("lili"));
+	
+	//score
+	double mat[1][4] = { stu.score[0],stu.score[1],stu.score[2],stu.score[3] };
+	mxArray *matscoure = mxCreateDoubleMatrix(1, 4, mxREAL);  //分配1行4列的double空间
+	memcpy(mxGetPr(matscoure), mat, 1 * 4 * sizeof(double));
+	mxSetField(params, 0, "score", matscoure);
+	
+	//vec
+	double v[2][2] = { stu.vec[0][0],stu.vec[0][1],stu.vec[1][0],stu.vec[1][1]};
+	mxArray *matV = mxCreateDoubleMatrix(2, 2, mxREAL);  //分配1行4列的double空间
+	memcpy(mxGetPr(matV), v, 2 * 2 * sizeof(double));
+	mxSetField(params, 0, "vec", matV);
+	
+	//flag
+	double f = stu.flag;
+	mxArray *matF = mxCreateDoubleMatrix(1, 1, mxREAL);  //分配1行4列的double空间
+	memcpy(mxGetPr(matF), &f, 1 * 1 * sizeof(double));
+	mxSetField(params, 0, "flag", matF);
+
+	//tool
+	const char* fields1[] = { "count", "sales"};
+	mxArray *paramsTool = mxCreateStructMatrix(1, 1, 2, fields1);
+		//count
+		double countValue = stu.tool.count;
+		mxArray *matC = mxCreateDoubleMatrix(1, 1, mxREAL);  //分配1行1列的double空间
+		memcpy(mxGetPr(matC), &countValue, 1 * 1 * sizeof(double));
+		mxSetField(paramsTool, 0, "count", matC);
+		//sales
+		double salesValue = stu.tool.sales;
+		mxArray *matS = mxCreateDoubleMatrix(1, 1, mxREAL);  //分配1行1列的double空间
+		memcpy(mxGetPr(matS), &salesValue, 1 * 1 * sizeof(double));
+		mxSetField(paramsTool, 0, "sales", matS);
+	mxSetField(params, 0, "tool", paramsTool);
+}
+	

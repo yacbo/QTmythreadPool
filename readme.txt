@@ -8,7 +8,7 @@
 
 5.SignalAndSlots探索QT信号和槽之间的关系。
 
-6.QThreadDemo探讨的是QThread使用的两种方法。也使用到了信号和槽。
+6.QThreadDemo探讨的是QThread使用的两种方法。也使用到了信号和槽。将方法移动到线程中。
 
 7.QProcessDemo 探讨的是利用QProcess执行cmd命令。
 
@@ -41,5 +41,7 @@
 23.操作数据库 mysql
 
 24.车辆管理界面 ToolBox组建
+
+25.thread在类的成员函数中的使用 需要thread和执行函数在一个类中,类成员函数作为回调函数bind一下。
 
 com中是存放的是可执行程序所需要的.dll库。

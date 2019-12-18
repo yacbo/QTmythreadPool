@@ -11,8 +11,7 @@ void MyThread::run()
     qDebug()<<"current thread ID:"<<QThread::currentThreadId()<<'\n';
     //循环一千次
     int count = 0;
-    for(int i = 0;i!=1000;++i)
-    {
+    for(int i = 0;i!=1000;++i){
      ++count;
     }
     //发送结束信号
@@ -26,8 +25,7 @@ void MyThread::mythread_slots(const int val)
     qDebug()<<"current thread ID:"<<QThread::currentThreadId()<<'\n';
     //循环一千次
     int count = 2000;
-    for(int i = 0;i!=1000;++i)
-    {
+    for(int i = 0;i!=1000;++i){
      ++count;
     }
     emit mythread_signal(count);

@@ -1,6 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 #include "wrapper.h"
+#include "weback.h"
 #include <QWidget>
 
 namespace Ui {
@@ -25,6 +26,7 @@ private:
 
 private:
     Wrapper *pWrapper;
+    WeBack *pWeBack;
 
 public:
     void callback_hand(int num);

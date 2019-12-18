@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         widget.cpp \
-    wrapper.cpp
+    wrapper.cpp \
+    weback.cpp
 
 HEADERS  += widget.h \
-    wrapper.h
+    wrapper.h \
+    weback.h
 
 FORMS    += widget.ui

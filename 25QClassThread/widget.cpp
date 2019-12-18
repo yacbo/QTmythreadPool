@@ -11,12 +11,16 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     pWrapper = new Wrapper();
-    pWrapper->m_f = std::bind(&Widget::callback_hand,this,std::placeholders::_1);  //将回调方法绑定到对象中
+    pWrapper->m_f = std::bind(&Widget::callback_hand,this,std::placeholders::_1);  //绑定widget中的回调
+
+    pWeBack = new WeBack();
+//    pWrapper->m_f = std::bind(&WeBack::callback_hand,pWeBack,std::placeholders::_1); //绑定WeBack中的回调
 }
 
 Widget::~Widget()
 {
     delete pWrapper;
+    delete pWeBack;
     delete ui;
 }
 
@@ -24,7 +28,6 @@ void Widget::on_pushButton_clicked()
 {
    std::thread th = pWrapper->member1_thread();
    th.detach();
-
 }
 
 void Widget::on_pushButton_2_clicked()

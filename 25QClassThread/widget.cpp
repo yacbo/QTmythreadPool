@@ -40,3 +40,19 @@ void Widget::callback_hand(int num)
 {
     ui->label->setText(QString::fromStdString(std::to_string(num)));
 }
+
+void Widget::handler_thread(int num)
+{
+    int volatile count = 10;
+    while(count --)
+    {
+        SleeperThread::msleep(300);
+        std::cout<<"handler "<<count<<"-->"<< num << QThread::currentThreadId() << std::endl;
+    }
+}
+
+void Widget::on_pushButton_3_clicked()
+{
+    std::thread th(handler_thread,this,10);
+    th.detach();
+}

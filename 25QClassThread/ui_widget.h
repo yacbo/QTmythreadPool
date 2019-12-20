@@ -26,6 +26,7 @@ public:
     QPushButton *pushButton;
     QPushButton *pushButton_2;
     QLabel *label;
+    QPushButton *pushButton_3;
 
     void setupUi(QWidget *Widget)
     {
@@ -41,6 +42,9 @@ public:
         label = new QLabel(Widget);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(40, 260, 54, 12));
+        pushButton_3 = new QPushButton(Widget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(300, 200, 75, 23));
 
         retranslateUi(Widget);
 
@@ -53,6 +57,7 @@ public:
         pushButton->setText(QApplication::translate("Widget", "PushButton", Q_NULLPTR));
         pushButton_2->setText(QApplication::translate("Widget", "PushButton2", Q_NULLPTR));
         label->setText(QApplication::translate("Widget", "TextLabel", Q_NULLPTR));
+        pushButton_3->setText(QApplication::translate("Widget", "PushButton3", Q_NULLPTR));
     } // retranslateUi
 
 };

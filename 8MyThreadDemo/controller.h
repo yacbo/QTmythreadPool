@@ -19,7 +19,7 @@ class Controller :public QObject
     signals:
         void operate(const int);//发送信号触发线程
     private:
-        MyThread *myThrd;
+        MyThread *pMyThread;
 };
 
 #endif // CONTROLLER_H

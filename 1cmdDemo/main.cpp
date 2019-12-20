@@ -26,13 +26,13 @@ IntVec to_int_vec(const char* content)
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[])    //默认 argc为1 argv[0]是程序exe全路径
 {
     double mat[1][4] = {2.01,1.02,3.21,6.213 };
     double douArr[1][4]={0};
     memcpy(douArr,mat,1*4*sizeof(double));
     int intValue = (int)douArr[0][0];
-     std::cout<<intValue<<std::endl;
+    std::cout<<intValue<<std::endl;
 
     /*
         //枚举测试

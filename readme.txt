@@ -36,12 +36,12 @@
 
 20.QUdp案例
 
-21.QTimer定时器操作 
+21.QTimer定时器操作 两种方式：QTimer类对象 timeout信号，Widget::timerEvent(QTimerEvent *event)  
 
 23.操作数据库 mysql
 
 24.车辆管理界面 ToolBox组建
 
-25.thread在类的成员函数中的使用 需要thread和执行函数在一个类中,类成员函数作为回调函数bind一下。
+25.thread在类的成员函数中的使用 A需要thread和执行函数在一个类中,B类成员函数作为回调函数bind一下。C线程休眠等QThread::msleep。QThread::currentThreadId()
 
 com中是存放的是可执行程序所需要的.dll库。

@@ -17,7 +17,6 @@ Widget::Widget(QWidget *parent) :
                 }
             );
 
-
      m_time_int = this->startTimer(1000);
 }
 

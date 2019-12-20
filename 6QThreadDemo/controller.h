@@ -8,7 +8,7 @@
 class Controller:public QObject
 {
     Q_OBJECT
-    QThread workerThread;
+    QThread thread;
 public:
     Controller(QObject *parent = nullptr);
     ~Controller();

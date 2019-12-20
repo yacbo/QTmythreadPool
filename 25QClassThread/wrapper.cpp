@@ -9,7 +9,7 @@ void Wrapper::member1()
     int n = 0;
     while(n<10)
     {
-        cout<<"member "<<n<<endl;
+        cout<<"member "<<n <<endl;
         n++;
         m_f(n); //调用回调方法
         SleeperThread::msleep(500); //
